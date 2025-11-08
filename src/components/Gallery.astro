@@ -1,0 +1,16 @@
+<div class="gallery" id="polaroid-gallery">
+  <slot />
+</div>
+
+<style>
+  .gallery {
+    position: relative;
+    height: 500px;
+    width: min(1100px, 90vw);
+    margin: 0 auto;
+
+    .polaroid {
+      position: absolute;
+    }
+  }
+</style>

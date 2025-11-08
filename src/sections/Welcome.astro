@@ -1,0 +1,47 @@
+---
+import gallery_1 from "../assets/images/gallery/gallery_1_cropped_5x7.png";
+import gallery_2 from "../assets/images/gallery/gallery_2_cropped_5x7.png";
+import gallery_3 from "../assets/images/gallery/gallery_3_cropped_5x7.png";
+import gallery_4 from "../assets/images/gallery/gallery_4_cropped_5x7.png";
+import gallery_5 from "../assets/images/gallery/gallery_5_cropped_5x7.png";
+import gallery_6 from "../assets/images/gallery/gallery_6_cropped_5x7.png";
+import gallery_7 from "../assets/images/gallery/gallery_7_cropped_1x1.png";
+import gallery_8 from "../assets/images/gallery/gallery_8_cropped_1x1.png";
+import gallery_9 from "../assets/images/gallery/gallery_9_cropped_5x7.png";
+
+import Gallery from "../components/Gallery.astro";
+import Polaroid from "../components/Polaroid.astro";
+
+const imageArray = [
+  { src: gallery_1.src, caption: "Vår första dejt <3" },
+  { src: gallery_2.src, caption: "Vår första dejt <3" },
+  { src: gallery_3.src, caption: "Vår första dejt <3" },
+  { src: gallery_4.src, caption: "Vår första dejt <3" },
+  { src: gallery_5.src, caption: "Vår första dejt <3" },
+  { src: gallery_6.src, caption: "Vår första dejt <3" },
+  { src: gallery_7.src, caption: "Vår första dejt <3" },
+  { src: gallery_8.src, caption: "Vår första dejt <3" },
+  { src: gallery_9.src, caption: "Vår första dejt <3" },
+];
+---
+
+<section id="welcome">
+  <h2>Välkommen att fira vårt äktenskap</h2>
+  <Gallery>
+    <Polaroid image={gallery_1.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_2.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_3.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_4.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_5.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_6.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_7.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_8.src} caption="Vår första dejt <3" />
+    <Polaroid image={gallery_9.src} caption="Vår första dejt <3" />
+  </Gallery>
+</section>
+
+<style>
+  #welcome {
+    gap: 5rem;
+  }
+</style>

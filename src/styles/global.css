@@ -1,0 +1,131 @@
+/** Reset */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  min-height: 100vh;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  text-decoration: none;
+  color: unset;
+}
+
+li,
+ul {
+  list-style: none;
+}
+
+fieldset {
+  border: none;
+}
+
+/** End of Reset */
+
+@font-face {
+  font-family: "Libre Caslon Display";
+  src: url("/fonts/LibreCaslonDisplay-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Libre Caslon Text";
+  src: url("/fonts/LibreCaslonText-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Libre Caslon Text";
+  src: url("/fonts/LibreCaslonText-Italic.ttf") format("truetype");
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Libre Caslon Text";
+  src: url("/fonts/LibreCaslonText-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Caveat";
+  src: url("/fonts/Caveat-VariableFont_wght.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --color-bg: #f2f2f0;
+
+  --color-primary-300: #97a697;
+  --color-primary-500: #698c72;
+  --color-primary-900: #3b4036;
+
+  --color-accent-500: #bf8641;
+
+  --font-display: "Libre Caslon Display", serif;
+  --font-body: "Libre Caslon Text", serif;
+  --font-marker: "Caveat", sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  font-family: var(--font-body);
+  color: var(--color-primary-900);
+
+  /* Draw a horizontal line every 100vh as a repeating background gradient */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 99vh,
+    #e0e0dc 99vh,
+    #e0e0dc 100vh
+  );
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 100;
+  line-height: 1;
+  font-size: 3rem;
+}
