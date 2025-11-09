@@ -425,7 +425,7 @@ import Layout from "../layouts/Layout.astro";
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  const initRsvpForm = () => {
     const form = document.querySelector(".rsvpForm");
     if (!(form instanceof HTMLFormElement)) return;
     const endpoint =
@@ -601,5 +601,11 @@ import Layout from "../layouts/Layout.astro";
         showErrorState();
       }
     });
-  });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRsvpForm, { once: true });
+  } else {
+    initRsvpForm();
+  }
 </script>
