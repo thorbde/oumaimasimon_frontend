@@ -1,0 +1,91 @@
+.container {
+  width: min(64rem, 100%);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vw, 4rem) 0;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  min-height: clamp(28rem, 82vw, 44rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.cardButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  translate: -50% -50%;
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.cardButton:active {
+  cursor: grabbing;
+}
+
+.cardButton:focus-visible,
+.cardButton:focus-visible > * {
+  cursor: grabbing;
+}
+
+.cardButton:focus-visible {
+  outline: none;
+}
+
+.polaroid {
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(8.5rem, 35vw, 15rem);
+  padding: 0.75rem 0.9rem 1.8rem;
+  box-shadow: 0 0.6rem 2.5rem rgba(0, 0, 0, 0.16);
+  gap: 0.75rem;
+  transition: box-shadow 0.35s ease, filter 0.35s ease;
+  pointer-events: none;
+  color: var(--color-primary-900);
+}
+
+.polaroidActive {
+  box-shadow: 0 1.8rem 3rem rgba(0, 0, 0, 0.22);
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.caption {
+  font-family: var(--font-marker);
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+  pointer-events: none;
+}
+
+.cardButton:focus-visible .polaroid {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 6px;
+}
+
+@media (min-width: 48rem) {
+  .stage {
+    min-height: clamp(32rem, 48vw, 50rem);
+  }
+
+  .polaroid {
+    width: clamp(10rem, 24vw, 17.5rem);
+    padding: 1rem 1.1rem 2.4rem;
+    gap: 1rem;
+  }
+}
