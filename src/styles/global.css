@@ -132,3 +132,7 @@ input::placeholder,
 textarea::placeholder {
   color: color-mix(in srgb, var(--color-primary-900) 60%, transparent);
 }
+
+strong {
+  font-weight: 600;
+}
