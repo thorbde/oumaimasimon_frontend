@@ -15,7 +15,7 @@ import Layout from "../layouts/Layout.astro";
     <form
       class="rsvpForm"
       method="POST"
-      action="http://api.oumaimasimon.se/submit"
+      action="https://api.oumaimasimon.se/submit"
       autocomplete="on"
       data-state="idle"
     >
@@ -429,7 +429,7 @@ import Layout from "../layouts/Layout.astro";
     const form = document.querySelector(".rsvpForm");
     if (!(form instanceof HTMLFormElement)) return;
     const endpoint =
-      form.getAttribute("action") || "http://api.oumaimasimon.se/submit";
+      form.getAttribute("action") || "https://api.oumaimasimon.se/submit";
 
     const attendanceInputs = Array.from(
       form.querySelectorAll<HTMLInputElement>('input[name="attendance"]')
