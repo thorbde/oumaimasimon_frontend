@@ -1,0 +1,102 @@
+---
+type ButtonSize = "small" | "medium";
+
+type AnchorProps = {
+  href: string;
+} & astroHTML.JSX.AnchorHTMLAttributes;
+
+type NativeButtonProps = {
+  href?: undefined;
+} & astroHTML.JSX.ButtonHTMLAttributes;
+
+type ButtonProps = {
+  size?: ButtonSize;
+  class?: string;
+} & (AnchorProps | NativeButtonProps);
+
+const props = Astro.props as ButtonProps;
+const { class: className, size = "medium" } = props;
+const classList = {
+  button: true,
+  [className ?? ""]: Boolean(className),
+};
+const isLink = typeof props.href === "string";
+---
+
+{
+  isLink
+    ? (() => {
+        const {
+          href,
+          class: _class,
+          size: _size,
+          ...anchorProps
+        } = props as AnchorProps & { class?: string; size?: ButtonSize };
+
+        return (
+          <a
+            href={href}
+            data-size={size}
+            class:list={classList}
+            {...anchorProps}
+          >
+            <slot />
+          </a>
+        );
+      })()
+    : (() => {
+        const {
+          class: _class,
+          size: _size,
+          href: _href,
+          type: buttonType = "button",
+          ...buttonProps
+        } = props as NativeButtonProps & {
+          class?: string;
+          size?: ButtonSize;
+        };
+
+        return (
+          <button
+            type={buttonType}
+            data-size={size}
+            class:list={classList}
+            {...buttonProps}
+          >
+            <slot />
+          </button>
+        );
+      })()
+}
+
+<style>
+  .button {
+    background-color: var(--color-primary-500);
+    color: var(--color-bg);
+    padding: 0.85rem 1.75rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .button[data-size="small"] {
+    padding: 0.5rem 1rem;
+  }
+
+  .button[data-size="medium"] {
+    padding: 0.85rem 1.75rem;
+  }
+
+  .button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.12);
+  }
+
+  .button:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+</style>

@@ -1,4 +1,5 @@
 ---
+import Button from "../components/Button.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
@@ -8,7 +9,7 @@ import Layout from "../layouts/Layout.astro";
       <h1>RSVP</h1>
       <p>
         Vi ser så mycket fram emot att fira med er! Fyll i formuläret nedan
-        senast 1 maj 2026 så vi kan planera mat, sittning och överraskningar.
+        senast 26 Februari 2026 så vi kan planera i lugn och ro.
       </p>
     </div>
     <form
@@ -20,21 +21,26 @@ import Layout from "../layouts/Layout.astro";
     >
       <div class="formBody" data-form-body>
         <div class="field">
-          <label for="full-name">Fullständigt namn</label>
+          <label for="full-name">Namn</label>
           <input id="full-name" name="full-name" type="text" required />
         </div>
         <div class="field">
-          <label for="email">E-postadress</label>
+          <label for="email">E-post</label>
           <input id="email" name="email" type="email" required />
         </div>
-        <div class="field">
-          <label for="attendance">Kommer du?</label>
-          <select id="attendance" name="attendance" required>
-            <option value="">Välj ett alternativ</option>
-            <option value="yes">Ja, jag/vi kommer!</option>
-            <option value="no">Tyvärr, jag/vi kan inte komma</option>
-          </select>
-        </div>
+        <fieldset class="field fieldset attendance">
+          <legend>Kommer du?</legend>
+          <div class="option-group inline">
+            <label>
+              <input type="radio" name="attendance" value="yes" required />
+              Ja
+            </label>
+            <label>
+              <input type="radio" name="attendance" value="no" />
+              Nej
+            </label>
+          </div>
+        </fieldset>
         <div class="conditionalFields" data-conditional-fields>
           <div class="field">
             <label for="dietary">Mat & allergier</label>
@@ -50,11 +56,11 @@ import Layout from "../layouts/Layout.astro";
             <div class="option-group inline">
               <label>
                 <input type="radio" name="alcohol" value="yes" required />
-                Ja, gärna
+                Ja
               </label>
               <label>
                 <input type="radio" name="alcohol" value="no" />
-                Nej tack
+                Nej
               </label>
             </div>
           </fieldset>
@@ -73,23 +79,18 @@ import Layout from "../layouts/Layout.astro";
           </div>
           <div class="field">
             <label for="message">Meddelande till brudparet</label>
-            <textarea
-              id="message"
-              name="message"
-              rows="4"
-              placeholder="Vill du önska en låt, förvarna om tal eller dela något annat?"
-            ></textarea>
+            <textarea id="message" name="message" rows="4"></textarea>
           </div>
         </div>
-        <button type="submit">Skicka mitt svar</button>
+        <Button type="submit">Skicka mitt svar</Button>
       </div>
       <div class="formStatus" data-form-status hidden>
         <div class="statusIcon" data-status-icon aria-hidden="true"></div>
         <p class="statusTitle" data-status-title></p>
         <p class="statusMessage" data-status-message></p>
-        <button type="button" class="statusReset" data-status-reset hidden>
-          Fyll i formuläret igen
-        </button>
+        <Button class="statusReset" data-status-reset hidden
+          >Tillbaka till hemsidan</Button
+        >
       </div>
     </form>
   </section>
@@ -97,7 +98,7 @@ import Layout from "../layouts/Layout.astro";
 
 <style>
   #rsvp {
-    padding: 8rem 1.5rem 4rem;
+    padding: 8rem 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -177,7 +178,6 @@ import Layout from "../layouts/Layout.astro";
       color-mix(in srgb, var(--color-primary-500) 60%, transparent);
     border-radius: 999px;
     padding: 0.65rem 1.5rem;
-    font-weight: 600;
     cursor: pointer;
     transition:
       background-color 0.2s ease,
@@ -195,16 +195,9 @@ import Layout from "../layouts/Layout.astro";
     gap: 0.5rem;
   }
 
-  label,
-  legend {
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
   input[type="text"],
   input[type="email"],
   input[type="number"],
-  select,
   textarea {
     width: 100%;
     border-radius: 8px;
@@ -219,7 +212,6 @@ import Layout from "../layouts/Layout.astro";
   }
 
   input:focus,
-  select:focus,
   textarea:focus {
     outline: none;
     border-color: var(--color-primary-500);
@@ -285,8 +277,8 @@ import Layout from "../layouts/Layout.astro";
   }
 
   input[type="checkbox"]::after {
-    width: 0.55rem;
-    height: 0.35rem;
+    width: 0.25rem;
+    height: 0.45rem;
     border-right: 2px solid #fff;
     border-bottom: 2px solid #fff;
     transform: scale(0) rotate(45deg);
@@ -324,31 +316,6 @@ import Layout from "../layouts/Layout.astro";
     font-weight: 500;
   }
 
-  button {
-    justify-self: flex-start;
-    background-color: var(--color-primary-500);
-    color: var(--color-bg);
-    border: none;
-    border-radius: 8px;
-    padding: 0.85rem 1.75rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition:
-      transform 0.15s ease,
-      box-shadow 0.15s ease;
-  }
-
-  button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12);
-  }
-
-  button:active {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-
   .conditionalFields {
     display: grid;
     gap: 1.5rem;
@@ -376,6 +343,14 @@ import Layout from "../layouts/Layout.astro";
       visibility 0s;
   }
 
+  .rsvpForm[data-state="loading"] {
+    .statusTitle,
+    .statusMessage,
+    .statusReset {
+      display: none;
+    }
+  }
+
   .rsvpForm[data-state="loading"] .statusIcon {
     border: 4px solid
       color-mix(in srgb, var(--color-primary-500) 60%, transparent);
@@ -394,7 +369,7 @@ import Layout from "../layouts/Layout.astro";
   .rsvpForm[data-state="success"] .statusIcon::after {
     content: "";
     position: absolute;
-    inset: 0.65rem 0.75rem 0.65rem 1rem;
+    inset: 0.65rem 1rem 1rem 1.2rem;
     border-right: 3px solid var(--color-bg);
     border-bottom: 3px solid var(--color-bg);
     transform: rotate(45deg);
@@ -456,7 +431,9 @@ import Layout from "../layouts/Layout.astro";
     const endpoint =
       form.getAttribute("action") || "http://localhost:3000/submit";
 
-    const attendanceField = form.querySelector("#attendance");
+    const attendanceInputs = Array.from(
+      form.querySelectorAll<HTMLInputElement>('input[name="attendance"]')
+    );
     const conditionalBlock = form.querySelector("[data-conditional-fields]");
     const statusPanel = form.querySelector("[data-form-status]");
     const statusTitle = form.querySelector("[data-status-title]");
@@ -465,7 +442,8 @@ import Layout from "../layouts/Layout.astro";
     const submitButton = form.querySelector('button[type="submit"]');
 
     if (
-      !(attendanceField instanceof HTMLSelectElement) ||
+      attendanceInputs.length === 0 ||
+      attendanceInputs.some((input) => input.type !== "radio") ||
       !(conditionalBlock instanceof HTMLElement) ||
       !(statusPanel instanceof HTMLElement) ||
       !(statusTitle instanceof HTMLElement) ||
@@ -477,12 +455,11 @@ import Layout from "../layouts/Layout.astro";
     }
 
     const conditionalMeta = Array.from(
-      conditionalBlock.querySelectorAll("input, select, textarea")
+      conditionalBlock.querySelectorAll("input, textarea")
     ).map((element) => ({
       element,
       wasRequired:
         element instanceof HTMLInputElement ||
-        element instanceof HTMLSelectElement ||
         element instanceof HTMLTextAreaElement
           ? element.required
           : false,
@@ -513,10 +490,9 @@ import Layout from "../layouts/Layout.astro";
       form.dataset.state = "success";
       statusPanel.hidden = false;
       statusTitle.textContent = "Klart!";
-      statusMessage.textContent =
-        "Tack så mycket – vi hör av oss om det dyker upp något mer.";
+      statusMessage.textContent = "Tack för ditt svar!";
       statusReset.hidden = false;
-      statusReset.textContent = "Skicka ett till svar";
+      statusReset.textContent = "Tillbaka till hemsidan";
       submitButton.disabled = false;
       submitButton.dataset.state = "";
     };
@@ -526,7 +502,7 @@ import Layout from "../layouts/Layout.astro";
       statusPanel.hidden = false;
       statusTitle.textContent = "Hoppsan!";
       statusMessage.textContent =
-        "Något gick fel när vi försökte spara ert svar. Testa gärna igen om en liten stund.";
+        "Något gick fel när vi försökte spara ert svar. Testa gärna igen om en liten stund, eller kontakta oss på toasmaster.oumaimasimon@gmail.com.";
       statusReset.hidden = false;
       statusReset.textContent = "Försök igen";
       submitButton.disabled = false;
@@ -551,8 +527,11 @@ import Layout from "../layouts/Layout.astro";
       );
     };
 
+    const getAttendanceValue = () =>
+      attendanceInputs.find((input) => input.checked)?.value ?? "";
+
     const toggleConditionalFields = () => {
-      const shouldShow = attendanceField.value === "yes";
+      const shouldShow = getAttendanceValue() === "yes";
       conditionalBlock.classList.toggle("is-visible", shouldShow);
       conditionalBlock.setAttribute(
         "aria-hidden",
@@ -562,7 +541,6 @@ import Layout from "../layouts/Layout.astro";
       conditionalMeta.forEach(({ element, wasRequired }) => {
         if (
           element instanceof HTMLInputElement ||
-          element instanceof HTMLSelectElement ||
           element instanceof HTMLTextAreaElement
         ) {
           element.disabled = !shouldShow;
@@ -590,15 +568,14 @@ import Layout from "../layouts/Layout.astro";
 
     statusReset.addEventListener("click", () => {
       showIdleState();
-      const firstField = form.querySelector("input, select, textarea");
-      if (firstField instanceof HTMLElement) {
-        firstField.focus();
-      }
+      window.location.href = "/";
     });
 
     toggleConditionalFields();
     showIdleState();
-    attendanceField.addEventListener("change", toggleConditionalFields);
+    attendanceInputs.forEach((input) => {
+      input.addEventListener("change", toggleConditionalFields);
+    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
