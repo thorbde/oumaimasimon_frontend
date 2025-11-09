@@ -1,79 +1,75 @@
-<section id="info">
-  <h2>Info</h2>
-  <p class="lead">
-    Bröllopsfest med start kl.&nbsp;13:00 lördagen den 11&nbsp;juli&nbsp;2026. Här är
-    svaren på de vanligaste frågorna inför dagen.
-  </p>
-  <ul class="guidelines">
-    <li>
-      <strong>Klädsel:</strong> Uppklätt – tänk somrig elegans. Ljus kostym,
-      sommarklänning eller annat festligt du kan dansa i hela natten.
-    </li>
-    <li>
-      <strong>Toastmasters:</strong> Tal, lekar och andra överraskningar stämmer
-      ni av med våra toastmasters via
-      <a href="mailto:toastmaster.oumaimasimon@gmail.com"
-        >toastmaster.oumaimasimon@gmail.com</a
-      >.
-    </li>
-    <li>
-      <strong>Gåvor:</strong> Bidrag till vår bröllopsresa uppskattas –
-      Swish&nbsp;076&nbsp;039&nbsp;83&nbsp;54 – men ni har självklart fria händer.
-    </li>
-    <li>
-      <strong>OSA:</strong> Svara senast 28&nbsp;februari&nbsp;2026 här på hemsidan
-      <a href="https://www.oumaimasimon.se" target="_blank" rel="noreferrer"
-        >www.oumaimasimon.se</a
-      >.
-    </li>
-  </ul>
-</section>
+---
+import SectionTitle from "../components/SectionTitle.astro";
+import Section from "../components/Section.astro";
+import SectionContent from "../components/SectionContent.astro";
+---
+
+<Section id="info">
+  <SectionTitle
+    title="Vanliga frågor"
+    description="Bröllopsfesten startar kl. 13:00 lördagen den 11 juli 2026. Här är svaren på de vanligaste frågorna inför bröllopsfesten."
+  />
+  <SectionContent>
+    <ul class="guidelines">
+      <li>
+        <h3>Klädsel</h3>
+        <p>Uppklätt, välj något som känns både elegant och bekvämt.</p>
+      </li>
+      <hr />
+      <li>
+        <h3>Anmälan av tal</h3>
+        <p>
+          För att vi ska kunna planera bröllopsfesten, ber vi er att anmäla
+          eventuella tal till våra toastmasters i förväg, via e-post till
+          <a href="mailto:toastmaster.oumaimasimon@gmail.com"
+            >toastmaster.oumaimasimon@gmail.com</a
+          >.
+        </p>
+      </li>
+      <hr />
+      <li>
+        <h3>Gåvor</h3>
+        <p>
+          Om ni önskar att ge en bröllopsgåva, så skulle vi vara mycket
+          tacksamma för bidrag till vår bröllopsresa.
+          Swish&nbsp;076&nbsp;039&nbsp;83&nbsp;54
+        </p>
+      </li>
+      <hr />
+      <li>
+        <h3>OSA</h3>
+        <p>Svara senast 28&nbsp;februari&nbsp;2026.</p>
+      </li>
+    </ul>
+  </SectionContent>
+</Section>
 
 <style>
-  #info {
+  .guidelines {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
-    padding: 4rem 1.5rem;
-    text-align: center;
-  }
-
-  .lead {
-    max-width: 36rem;
-  }
-
-  .guidelines {
-    display: grid;
-    gap: 1rem;
+    gap: 6rem;
     padding: 0;
     margin: 0;
     list-style: none;
-    max-width: 32rem;
-    text-align: left;
-  }
+    max-width: 16rem;
 
-  .guidelines li {
-    background: color-mix(in srgb, var(--color-bg) 70%, white 30%);
-    border: 1px solid color-mix(in srgb, var(--color-primary-300) 35%, transparent);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.06);
-  }
-
-  @media (min-width: 768px) {
-    #info {
-      gap: 3rem;
-      padding: 6rem 2.5rem;
-      text-align: left;
-      align-items: stretch;
+    hr {
+      width: 60%;
     }
 
-    .guidelines {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.5rem;
-      max-width: 100%;
+    h3 {
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-family: var(--font-body);
+      font-size: 1rem;
     }
   }
 </style>
-

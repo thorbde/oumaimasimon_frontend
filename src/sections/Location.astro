@@ -1,17 +1,13 @@
-<section id="plats">
-  <div class="content">
-    <h2>Plats</h2>
-    <p>
-      Vi håller vår bröllop på
-      <a
-        href="https://www.google.com/maps/place/Gårdstensvägen+10,+118+53+Stockholm/@59.3241573,18.0801384,17z/data=!3m1!4b1!4m6!3m5!1s0x465f9d5f013811c1:0x10b2280496001157!8m2!3d59.3241573!4d18.0823271!16s%2Fg%2F11c403qjzn?entry=ttu&g_ep=EgoyMDI1MTEwMi4wIKXMDSoASAFQAw%3D%3D"
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        Bergums Källegårdsväg 8, 424 91 Olofstorp
-      </a>
-    </p>
-  </div>
+---
+import Section from "../components/Section.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+---
+
+<Section id="plats">
+  <SectionTitle
+    title="Plats"
+    description="Ladan på Bergums Källegårdsväg 8, 424 91 Olofstorp"
+  />
   <div class="mapWrapper">
     <iframe
       class="map"
@@ -22,25 +18,9 @@
     >
     </iframe>
   </div>
-</section>
+</Section>
 
 <style>
-  #plats {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2rem;
-    padding: 4rem 1.5rem;
-    text-align: center;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-
   .mapWrapper {
     width: 100%;
     max-width: 32rem;
@@ -63,25 +43,5 @@
     width: 100%;
     height: 100%;
     border: 0;
-  }
-
-  @media (min-width: 768px) {
-    #plats {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4rem;
-      padding: 6rem 2.5rem;
-      text-align: left;
-    }
-
-    .content {
-      align-items: flex-start;
-      max-width: 28rem;
-    }
-
-    .mapWrapper {
-      max-width: 36rem;
-    }
   }
 </style>

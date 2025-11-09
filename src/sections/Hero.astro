@@ -1,8 +1,9 @@
 ---
 import Button from "../components/Button.astro";
+import Section from "../components/Section.astro";
 ---
 
-<section id="hero">
+<div id="hero">
   <h1>
     Oumaima
     <div class="ampersand">&</div>
@@ -12,9 +13,20 @@ import Button from "../components/Button.astro";
     <p class="date">11 Juli 2026</p>
     <Button size="small" href="/rsvp">RSVP</Button>
   </div>
-</section>
+</div>
 
 <style>
+  #hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    min-height: calc(100vh - var(--header-height));
+    gap: 2rem;
+  }
+
   h1 {
     font-family: var(--font-display);
     font-weight: 400;
@@ -40,11 +52,6 @@ import Button from "../components/Button.astro";
   }
 
   @media (min-width: 768px) {
-    #hero {
-      gap: 3rem;
-      padding: 8rem 2.5rem;
-    }
-
     h1 {
       font-size: 7rem;
 
@@ -55,7 +62,6 @@ import Button from "../components/Button.astro";
 
     .dateAndButton {
       flex-direction: row;
-      gap: 2rem;
     }
   }
 </style>

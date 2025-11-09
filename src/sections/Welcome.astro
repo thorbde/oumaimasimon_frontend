@@ -11,6 +11,8 @@ import gallery_9 from "../assets/images/gallery/gallery_9_cropped_5x7.png";
 
 import Gallery from "../components/Gallery.astro";
 import Polaroid from "../components/Polaroid.astro";
+import Section from "../components/Section.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 
 const imageArray = [
   { src: gallery_1.src, caption: "Vår första dejt <3" },
@@ -25,8 +27,8 @@ const imageArray = [
 ];
 ---
 
-<section id="welcome">
-  <h2>Välkommen att fira vårt äktenskap</h2>
+<Section id="welcome">
+  <SectionTitle title="Välkommen att fira vårt äktenskap" />
   <Gallery>
     <Polaroid image={gallery_1.src} caption="Vår första dejt <3" />
     <Polaroid image={gallery_2.src} caption="Vår första dejt <3" />
@@ -38,24 +40,4 @@ const imageArray = [
     <Polaroid image={gallery_8.src} caption="Vår första dejt <3" />
     <Polaroid image={gallery_9.src} caption="Vår första dejt <3" />
   </Gallery>
-</section>
-
-<style>
-  #welcome {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3rem;
-    padding: 4rem 1.5rem;
-    text-align: center;
-  }
-
-  @media (min-width: 768px) {
-    #welcome {
-      gap: 6rem;
-      padding: 6rem 2.5rem;
-      text-align: left;
-      align-items: stretch;
-    }
-  }
-</style>
+</Section>
