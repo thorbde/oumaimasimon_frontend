@@ -18,6 +18,7 @@ body {
 
 html {
   color-scheme: light dark;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -98,6 +99,11 @@ fieldset {
   --font-display: "Libre Caslon Display", serif;
   --font-body: "Libre Caslon Text", serif;
   --font-marker: "Caveat", sans-serif;
+  --header-height: 4.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -105,14 +111,25 @@ body {
   font-family: var(--font-body);
   color: var(--color-primary-900);
 
-  /* Draw a horizontal line every 100vh as a repeating background gradient */
+  /* Draw a horizontal line every 100vh as a repeating background gradient
   background-image: repeating-linear-gradient(
     to bottom,
     transparent,
     transparent 99vh,
     #e0e0dc 99vh,
     #e0e0dc 100vh
-  );
+  ); */
+}
+
+input,
+select,
+textarea {
+  color: var(--color-primary-900);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--color-primary-900) 60%, transparent);
 }
 
 section {
@@ -120,7 +137,7 @@ section {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: calc(100vh - var(--header-height));
 }
 
 h2 {

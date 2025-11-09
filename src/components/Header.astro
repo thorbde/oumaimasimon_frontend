@@ -4,12 +4,12 @@ import RsvpButton from "./RsvpButton.astro";
 
 <header>
   <nav>
-    <a class="logo" href="#hero">Oumaima & Simon</a>
+    <a class="logo" href="/#hero">Oumaima & Simon</a>
 
     <div class="links">
-      <a href="#plats">plats</a>
-      <a href="#toastmasters">toastmasters</a>
-      <a href="#dresscode">klädkod</a>
+      <a href="/#plats">plats</a>
+      <a href="/#toastmasters">toastmasters</a>
+      <a href="/#info">info</a>
       <RsvpButton />
     </div>
   </nav>
@@ -21,18 +21,43 @@ import RsvpButton from "./RsvpButton.astro";
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 100;
+    background: color-mix(in srgb, var(--color-bg) 92%, white 8%);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--color-primary-300) 35%, transparent);
+    backdrop-filter: blur(10px);
+  }
 
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    gap: 1.5rem;
+    text-transform: uppercase;
+
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .links {
+    font-family: var(--font-display);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  @media (max-width: 640px) {
     nav {
-      display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 1rem;
-
-      .links {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-      }
     }
   }
 </style>

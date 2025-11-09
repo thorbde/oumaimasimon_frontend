@@ -1,0 +1,79 @@
+<section id="info">
+  <h2>Info</h2>
+  <p class="lead">
+    Bröllopsfest med start kl.&nbsp;13:00 lördagen den 11&nbsp;juli&nbsp;2026. Här är
+    svaren på de vanligaste frågorna inför dagen.
+  </p>
+  <ul class="guidelines">
+    <li>
+      <strong>Klädsel:</strong> Uppklätt – tänk somrig elegans. Ljus kostym,
+      sommarklänning eller annat festligt du kan dansa i hela natten.
+    </li>
+    <li>
+      <strong>Toastmasters:</strong> Tal, lekar och andra överraskningar stämmer
+      ni av med våra toastmasters via
+      <a href="mailto:toastmaster.oumaimasimon@gmail.com"
+        >toastmaster.oumaimasimon@gmail.com</a
+      >.
+    </li>
+    <li>
+      <strong>Gåvor:</strong> Bidrag till vår bröllopsresa uppskattas –
+      Swish&nbsp;076&nbsp;039&nbsp;83&nbsp;54 – men ni har självklart fria händer.
+    </li>
+    <li>
+      <strong>OSA:</strong> Svara senast 28&nbsp;februari&nbsp;2026 här på hemsidan
+      <a href="https://www.oumaimasimon.se" target="_blank" rel="noreferrer"
+        >www.oumaimasimon.se</a
+      >.
+    </li>
+  </ul>
+</section>
+
+<style>
+  #info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  .lead {
+    max-width: 36rem;
+  }
+
+  .guidelines {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    max-width: 32rem;
+    text-align: left;
+  }
+
+  .guidelines li {
+    background: color-mix(in srgb, var(--color-bg) 70%, white 30%);
+    border: 1px solid color-mix(in srgb, var(--color-primary-300) 35%, transparent);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.06);
+  }
+
+  @media (min-width: 768px) {
+    #info {
+      gap: 3rem;
+      padding: 6rem 2.5rem;
+      text-align: left;
+      align-items: stretch;
+    }
+
+    .guidelines {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+      max-width: 100%;
+    }
+  }
+</style>
+

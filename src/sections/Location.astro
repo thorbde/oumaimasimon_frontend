@@ -1,0 +1,87 @@
+<section id="plats">
+  <div class="content">
+    <h2>Plats</h2>
+    <p>
+      Vi håller vår bröllop på
+      <a
+        href="https://www.google.com/maps/place/Gårdstensvägen+10,+118+53+Stockholm/@59.3241573,18.0801384,17z/data=!3m1!4b1!4m6!3m5!1s0x465f9d5f013811c1:0x10b2280496001157!8m2!3d59.3241573!4d18.0823271!16s%2Fg%2F11c403qjzn?entry=ttu&g_ep=EgoyMDI1MTEwMi4wIKXMDSoASAFQAw%3D%3D"
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        Bergums Källegårdsväg 8, 424 91 Olofstorp
+      </a>
+    </p>
+  </div>
+  <div class="mapWrapper">
+    <iframe
+      class="map"
+      loading="lazy"
+      allowfullscreen
+      referrerpolicy="no-referrer-when-downgrade"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d703.3090649217752!2d12.169655870397099!3d57.81401028174848!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x464558f26dbed593%3A0xc7a3315edfd53b05!2sBergums%20K%C3%A4lleg%C3%A5rdsv%C3%A4g%208%2C%20424%2091%20Olofstorp!5e1!3m2!1ssv!2sse!4v1762605692616!5m2!1ssv!2sse"
+    >
+    </iframe>
+  </div>
+</section>
+
+<style>
+  #plats {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2rem;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .mapWrapper {
+    width: 100%;
+    max-width: 32rem;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .mapWrapper::after {
+    content: "";
+    display: block;
+    padding-bottom: 65%;
+  }
+
+  .map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (min-width: 768px) {
+    #plats {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4rem;
+      padding: 6rem 2.5rem;
+      text-align: left;
+    }
+
+    .content {
+      align-items: flex-start;
+      max-width: 28rem;
+    }
+
+    .mapWrapper {
+      max-width: 36rem;
+    }
+  }
+</style>

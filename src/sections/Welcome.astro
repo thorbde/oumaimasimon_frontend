@@ -42,6 +42,20 @@ const imageArray = [
 
 <style>
   #welcome {
-    gap: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    #welcome {
+      gap: 6rem;
+      padding: 6rem 2.5rem;
+      text-align: left;
+      align-items: stretch;
+    }
   }
 </style>
