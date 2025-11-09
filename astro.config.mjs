@@ -3,6 +3,5 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://thorbde.github.io",
-  base: "/oumaimasimon_frontend",
+  site: "https://oumaimasimon.se",
 });
