@@ -14,73 +14,83 @@ import Layout from "../layouts/Layout.astro";
     <form
       class="rsvpForm"
       method="POST"
-      action="https://formspree.io/f/your-form-id"
+      action="http://localhost:3000/submit"
       autocomplete="on"
+      data-state="idle"
     >
-      <input type="hidden" name="_subject" value="RSVP – Oumaima & Simon" />
-      <div class="field">
-        <label for="full-name">Fullständigt namn</label>
-        <input id="full-name" name="full-name" type="text" required />
-      </div>
-      <div class="field">
-        <label for="email">E-postadress</label>
-        <input id="email" name="email" type="email" required />
-      </div>
-      <div class="field">
-        <label for="attendance">Kommer du?</label>
-        <select id="attendance" name="attendance" required>
-          <option value="">Välj ett alternativ</option>
-          <option value="yes">Ja, jag/vi kommer!</option>
-          <option value="no">Tyvärr, jag/vi kan inte komma</option>
-        </select>
-      </div>
-      <div class="conditionalFields" data-conditional-fields>
+      <div class="formBody" data-form-body>
         <div class="field">
-          <label for="dietary">Mat & allergier</label>
-          <textarea
-            id="dietary"
-            name="dietary"
-            rows="4"
-            placeholder="Berätta om allergier eller kostönskemål vi behöver känna till."
-          ></textarea>
+          <label for="full-name">Fullständigt namn</label>
+          <input id="full-name" name="full-name" type="text" required />
         </div>
-        <fieldset class="field fieldset">
-          <legend>Dricker du alkohol?</legend>
-          <div class="option-group inline">
-            <label>
-              <input type="radio" name="alcohol" value="yes" required />
-              Ja, gärna
-            </label>
-            <label>
-              <input type="radio" name="alcohol" value="no" />
-              Nej tack
-            </label>
+        <div class="field">
+          <label for="email">E-postadress</label>
+          <input id="email" name="email" type="email" required />
+        </div>
+        <div class="field">
+          <label for="attendance">Kommer du?</label>
+          <select id="attendance" name="attendance" required>
+            <option value="">Välj ett alternativ</option>
+            <option value="yes">Ja, jag/vi kommer!</option>
+            <option value="no">Tyvärr, jag/vi kan inte komma</option>
+          </select>
+        </div>
+        <div class="conditionalFields" data-conditional-fields>
+          <div class="field">
+            <label for="dietary">Mat & allergier</label>
+            <textarea
+              id="dietary"
+              name="dietary"
+              rows="4"
+              placeholder="Berätta om allergier eller kostönskemål vi behöver känna till."
+            ></textarea>
           </div>
-        </fieldset>
-        <div class="field">
-          <label>Vill du ha kaffe eller te?</label>
-          <div class="option-group inline">
-            <label>
-              <input type="checkbox" name="hot-drinks[]" value="coffee" />
-              Kaffe
-            </label>
-            <label>
-              <input type="checkbox" name="hot-drinks[]" value="tea" />
-              Te
-            </label>
+          <fieldset class="field fieldset">
+            <legend>Dricker du alkohol?</legend>
+            <div class="option-group inline">
+              <label>
+                <input type="radio" name="alcohol" value="yes" required />
+                Ja, gärna
+              </label>
+              <label>
+                <input type="radio" name="alcohol" value="no" />
+                Nej tack
+              </label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <label>Vill du ha kaffe eller te?</label>
+            <div class="option-group inline">
+              <label>
+                <input type="checkbox" name="hot-drinks[]" value="coffee" />
+                Kaffe
+              </label>
+              <label>
+                <input type="checkbox" name="hot-drinks[]" value="tea" />
+                Te
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="message">Meddelande till brudparet</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              placeholder="Vill du önska en låt, förvarna om tal eller dela något annat?"
+            ></textarea>
           </div>
         </div>
-        <div class="field">
-          <label for="message">Meddelande till brudparet</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="4"
-            placeholder="Vill du önska en låt, förvarna om tal eller dela något annat?"
-          ></textarea>
-        </div>
+        <button type="submit">Skicka mitt svar</button>
       </div>
-      <button type="submit">Skicka mitt svar</button>
+      <div class="formStatus" data-form-status hidden>
+        <div class="statusIcon" data-status-icon aria-hidden="true"></div>
+        <p class="statusTitle" data-status-title></p>
+        <p class="statusMessage" data-status-message></p>
+        <button type="button" class="statusReset" data-status-reset hidden>
+          Fyll i formuläret igen
+        </button>
+      </div>
     </form>
   </section>
 </Layout>
@@ -122,6 +132,63 @@ import Layout from "../layouts/Layout.astro";
     text-align: left;
   }
 
+  .formBody,
+  .formStatus {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .formStatus {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .rsvpForm[data-state="idle"] .formStatus {
+    display: none;
+  }
+
+  .rsvpForm:not([data-state="idle"]) .formBody {
+    display: none;
+  }
+
+  .statusIcon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .statusTitle {
+    font-size: 1.5rem;
+    font-family: var(--font-display);
+  }
+
+  .statusMessage {
+    max-width: 28rem;
+    line-height: 1.4;
+  }
+
+  .statusReset {
+    background: transparent;
+    border: 1px solid
+      color-mix(in srgb, var(--color-primary-500) 60%, transparent);
+    border-radius: 999px;
+    padding: 0.65rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .statusReset:hover {
+    background: var(--color-primary-500);
+    color: var(--color-bg);
+  }
+
   .field {
     display: flex;
     flex-direction: column;
@@ -140,7 +207,7 @@ import Layout from "../layouts/Layout.astro";
   select,
   textarea {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid
       color-mix(in srgb, var(--color-primary-300) 45%, transparent);
     background-color: color-mix(in srgb, var(--color-bg) 80%, white 20%);
@@ -262,7 +329,7 @@ import Layout from "../layouts/Layout.astro";
     background-color: var(--color-primary-500);
     color: var(--color-bg);
     border: none;
-    border-radius: 999px;
+    border-radius: 8px;
     padding: 0.85rem 1.75rem;
     font-size: 1rem;
     font-weight: 600;
@@ -309,6 +376,54 @@ import Layout from "../layouts/Layout.astro";
       visibility 0s;
   }
 
+  .rsvpForm[data-state="loading"] .statusIcon {
+    border: 4px solid
+      color-mix(in srgb, var(--color-primary-500) 60%, transparent);
+    border-top-color: color-mix(
+      in srgb,
+      var(--color-primary-500) 10%,
+      transparent
+    );
+    animation: spin 0.8s linear infinite;
+  }
+
+  .rsvpForm[data-state="success"] .statusIcon {
+    background-color: var(--color-primary-500);
+  }
+
+  .rsvpForm[data-state="success"] .statusIcon::after {
+    content: "";
+    position: absolute;
+    inset: 0.65rem 0.75rem 0.65rem 1rem;
+    border-right: 3px solid var(--color-bg);
+    border-bottom: 3px solid var(--color-bg);
+    transform: rotate(45deg);
+  }
+
+  .rsvpForm[data-state="error"] .statusIcon {
+    background-color: #b85c5c;
+  }
+
+  .rsvpForm[data-state="error"] .statusIcon::before,
+  .rsvpForm[data-state="error"] .statusIcon::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.75rem;
+    height: 0.25rem;
+    background-color: var(--color-bg);
+    border-radius: 1rem;
+  }
+
+  .rsvpForm[data-state="error"] .statusIcon::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .rsvpForm[data-state="error"] .statusIcon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
   @media (min-width: 768px) {
     #rsvp {
       padding: 10rem 3rem 6rem;
@@ -326,23 +441,115 @@ import Layout from "../layouts/Layout.astro";
   }
 </style>
 
+<style>
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".rsvpForm");
-    if (!form) return;
+    if (!(form instanceof HTMLFormElement)) return;
+    const endpoint =
+      form.getAttribute("action") || "http://localhost:3000/submit";
+
     const attendanceField = form.querySelector("#attendance");
     const conditionalBlock = form.querySelector("[data-conditional-fields]");
+    const statusPanel = form.querySelector("[data-form-status]");
+    const statusTitle = form.querySelector("[data-status-title]");
+    const statusMessage = form.querySelector("[data-status-message]");
+    const statusReset = form.querySelector("[data-status-reset]");
+    const submitButton = form.querySelector('button[type="submit"]');
+
     if (
       !(attendanceField instanceof HTMLSelectElement) ||
-      !(conditionalBlock instanceof HTMLElement)
+      !(conditionalBlock instanceof HTMLElement) ||
+      !(statusPanel instanceof HTMLElement) ||
+      !(statusTitle instanceof HTMLElement) ||
+      !(statusMessage instanceof HTMLElement) ||
+      !(statusReset instanceof HTMLButtonElement) ||
+      !(submitButton instanceof HTMLButtonElement)
     ) {
       return;
     }
 
-    const inputs = Array.from(
+    const conditionalMeta = Array.from(
       conditionalBlock.querySelectorAll("input, select, textarea")
-    );
-    conditionalBlock.hidden = false;
+    ).map((element) => ({
+      element,
+      wasRequired:
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLSelectElement ||
+        element instanceof HTMLTextAreaElement
+          ? element.required
+          : false,
+    }));
+
+    const showIdleState = () => {
+      form.dataset.state = "idle";
+      statusPanel.hidden = true;
+      statusTitle.textContent = "";
+      statusMessage.textContent = "";
+      statusReset.hidden = true;
+      submitButton.disabled = false;
+      submitButton.dataset.state = "";
+    };
+
+    const showLoadingState = () => {
+      form.dataset.state = "loading";
+      statusPanel.hidden = false;
+      statusTitle.textContent = "Skickar…";
+      statusMessage.textContent =
+        "Häng kvar en liten stund medan vi sparar ert svar.";
+      statusReset.hidden = true;
+      submitButton.disabled = true;
+      submitButton.dataset.state = "loading";
+    };
+
+    const showSuccessState = () => {
+      form.dataset.state = "success";
+      statusPanel.hidden = false;
+      statusTitle.textContent = "Klart!";
+      statusMessage.textContent =
+        "Tack så mycket – vi hör av oss om det dyker upp något mer.";
+      statusReset.hidden = false;
+      statusReset.textContent = "Skicka ett till svar";
+      submitButton.disabled = false;
+      submitButton.dataset.state = "";
+    };
+
+    const showErrorState = () => {
+      form.dataset.state = "error";
+      statusPanel.hidden = false;
+      statusTitle.textContent = "Hoppsan!";
+      statusMessage.textContent =
+        "Något gick fel när vi försökte spara ert svar. Testa gärna igen om en liten stund.";
+      statusReset.hidden = false;
+      statusReset.textContent = "Försök igen";
+      submitButton.disabled = false;
+      submitButton.dataset.state = "";
+    };
+
+    const serializeForm = () => {
+      const formData = new FormData(form);
+      const grouped = new Map();
+
+      formData.forEach((value, key) => {
+        const current = grouped.get(key) ?? [];
+        current.push(String(value));
+        grouped.set(key, current);
+      });
+
+      return Object.fromEntries(
+        Array.from(grouped.entries()).map(([key, values]) => [
+          key,
+          values.length <= 1 ? values[0] : values,
+        ])
+      );
+    };
 
     const toggleConditionalFields = () => {
       const shouldShow = attendanceField.value === "yes";
@@ -351,28 +558,71 @@ import Layout from "../layouts/Layout.astro";
         "aria-hidden",
         shouldShow ? "false" : "true"
       );
-      inputs.forEach((el) => {
+
+      conditionalMeta.forEach(({ element, wasRequired }) => {
         if (
-          el instanceof HTMLInputElement ||
-          el instanceof HTMLSelectElement ||
-          el instanceof HTMLTextAreaElement
+          element instanceof HTMLInputElement ||
+          element instanceof HTMLSelectElement ||
+          element instanceof HTMLTextAreaElement
         ) {
-          el.disabled = !shouldShow;
+          element.disabled = !shouldShow;
+          if (wasRequired) {
+            element.required = shouldShow;
+          }
           if (!shouldShow) {
             if (
-              el instanceof HTMLInputElement &&
-              (el.type === "checkbox" || el.type === "radio")
+              element instanceof HTMLInputElement &&
+              (element.type === "checkbox" || element.type === "radio")
             ) {
-              el.checked = false;
+              element.checked = false;
             } else {
-              el.value = "";
+              element.value = "";
             }
           }
         }
       });
     };
 
+    const resetForm = () => {
+      form.reset();
+      toggleConditionalFields();
+    };
+
+    statusReset.addEventListener("click", () => {
+      showIdleState();
+      const firstField = form.querySelector("input, select, textarea");
+      if (firstField instanceof HTMLElement) {
+        firstField.focus();
+      }
+    });
+
     toggleConditionalFields();
+    showIdleState();
     attendanceField.addEventListener("change", toggleConditionalFields);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      showLoadingState();
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serializeForm()),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        showSuccessState();
+        resetForm();
+      } catch (error) {
+        console.error(error);
+        showErrorState();
+      }
+    });
   });
 </script>
