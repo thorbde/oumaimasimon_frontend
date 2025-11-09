@@ -6,7 +6,10 @@
   </h1>
   <div class="dateAndButton">
     <p class="date">11 Juli 2026</p>
-    <a class="rsvpButton" href="/rsvp">RSVP</a>
+    <div class="rsvpButtonContainer">
+      <a class="rsvpButton" href="/rsvp">Anmälan</a>
+      <p>Anmäl dig senast 28 februari 2026</p>
+    </div>
   </div>
 </div>
 
@@ -19,7 +22,6 @@
     padding: 4rem 1.5rem;
     text-align: center;
     min-height: calc(100vh - var(--header-height));
-    gap: 2rem;
   }
 
   h1 {
@@ -43,11 +45,21 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 6rem;
+  }
+
+  .rsvpButtonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 1rem;
   }
 
   .rsvpButton {
     background-color: var(--color-primary-500);
+    font-family: var(--font-display);
+    text-transform: uppercase;
     color: var(--color-bg);
     padding: 0.85rem 1.75rem;
     border-radius: 4px;
