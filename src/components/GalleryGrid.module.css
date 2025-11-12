@@ -33,6 +33,23 @@
   width: 100%;
 }
 
+@media (max-width: 640px) {
+  .container {
+    gap: 6rem;
+    padding: clamp(1.25rem, 6vw, 2rem) clamp(1rem, 5vw, 1.5rem);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.125rem;
+  }
+
+  .card {
+    border-radius: 0.65rem;
+    box-shadow: 0 8px 20px rgba(15, 15, 15, 0.16);
+  }
+}
+
 .card {
   background: rgba(255, 255, 255, 0.75);
   border: none;
