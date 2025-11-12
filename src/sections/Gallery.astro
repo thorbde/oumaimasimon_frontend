@@ -1,0 +1,92 @@
+---
+import GalleryGrid from "../components/GalleryGrid";
+import Section from "../components/Section.astro";
+import SectionContent from "../components/SectionContent.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import type { ImageMetadata } from "astro";
+
+type GalleryItem = {
+  thumb: ImageMetadata;
+  full: ImageMetadata;
+  label: string;
+  sortKey: string;
+};
+
+type GalleryGroup = {
+  id: string;
+  title: string;
+  items: GalleryItem[];
+};
+
+const thumbImports = import.meta.glob(
+  "../assets/images/gallery/thumb/**/*.webp",
+  { eager: true }
+) as Record<string, { default: ImageMetadata }>;
+
+const fullsizeImports = import.meta.glob(
+  "../assets/images/gallery/fullsize/**/*.webp",
+  { eager: true }
+) as Record<string, { default: ImageMetadata }>;
+
+const toTitleCase = (value: string) =>
+  value
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const groups = new Map<string, GalleryItem[]>();
+
+for (const [path, module] of Object.entries(thumbImports)) {
+  const match = path.match(/gallery\/thumb\/([^/]+)\/([^/]+)\.webp$/i);
+  if (!match) continue;
+
+  const [, folder, filename] = match;
+  const fullsizePath = path.replace("/thumb/", "/fullsize/");
+  const fullsizeModule = fullsizeImports[fullsizePath];
+  if (!fullsizeModule) continue;
+
+  const sortKey = filename;
+  const item: GalleryItem = {
+    thumb: module.default,
+    full: fullsizeModule.default,
+    label: toTitleCase(filename),
+    sortKey,
+  };
+
+  const list = groups.get(folder) ?? [];
+  list.push(item);
+  groups.set(folder, list);
+}
+
+const gallerySections: GalleryGroup[] = Array.from(groups.entries())
+  .map(([folder, items]) => ({
+    id: folder,
+    title: toTitleCase(folder),
+    items: items.sort((a, b) =>
+      a.sortKey.localeCompare(b.sortKey, undefined, { numeric: true })
+    ),
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+
+const serializedSections = gallerySections.map((section) => ({
+  id: section.id,
+  title: section.title,
+  items: section.items.map((item) => ({
+    sectionId: section.id,
+    sectionTitle: section.title,
+    label: item.label,
+    thumbSrc: item.thumb.src,
+    thumbWidth: item.thumb.width,
+    thumbHeight: item.thumb.height,
+    fullSrc: item.full.src,
+  })),
+}));
+---
+
+<Section id="gallery">
+  <SectionTitle title="Galleri" />
+  <SectionContent>
+    <GalleryGrid client:load sections={serializedSections} />
+  </SectionContent>
+</Section>
