@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import styles from "./GalleryGrid.module.css";
 
 type GalleryItem = {
@@ -21,12 +22,25 @@ type Props = {
   sections: GallerySection[];
 };
 
-type ActiveItem = {
-  image: GalleryItem;
-};
-
 export default function GalleryGrid({ sections }: Props) {
-  const [active, setActive] = useState<ActiveItem | null>(null);
+  const [active, setActive] = useState<GalleryItem | null>(null);
+  const portalContainer = useMemo(() => {
+    if (typeof document === "undefined") {
+      return null;
+    }
+    const container = document.createElement("div");
+    container.setAttribute("data-gallery-overlay", "");
+    document.body.appendChild(container);
+    return container;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (portalContainer) {
+        document.body.removeChild(portalContainer);
+      }
+    };
+  }, [portalContainer]);
 
   const close = useCallback(() => {
     setActive(null);
@@ -80,7 +94,7 @@ export default function GalleryGrid({ sections }: Props) {
                   className={styles.card}
                   type="button"
                   role="listitem"
-                  onClick={() => setActive({ image: item })}
+                  onClick={() => setActive(item)}
                   aria-label={`${section.title}: ${item.label}`}
                 >
                   <img
@@ -98,42 +112,39 @@ export default function GalleryGrid({ sections }: Props) {
           </article>
         ))}
       </div>
-      {active && (
-        <div
-          className={styles.overlay}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${active.image.sectionTitle} ${active.image.label}`}
-          onClick={close}
-        >
+      {active &&
+        portalContainer &&
+        createPortal(
           <div
-            className={styles.dialog}
-            onClick={(event) => event.stopPropagation()}
+            className={styles.overlay}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${active.sectionTitle} ${active.label}`}
+            onClick={close}
           >
-            <button
-              type="button"
-              className={styles.closeButton}
-              onClick={close}
+            <div
+              className={styles.dialog}
+              onClick={(event) => event.stopPropagation()}
             >
-              <span aria-hidden="true">×</span>
-              <span className={styles.srOnly}>Close</span>
-            </button>
-            <div className={styles.dialogContent}>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={close}
+              >
+                <span aria-hidden="true">×</span>
+                <span className={styles.srOnly}>Close</span>
+              </button>
               <img
                 className={styles.fullImage}
-                src={active.image.fullSrc}
-                alt={`${active.image.sectionTitle} ${active.image.label}`}
+                src={active.fullSrc}
+                alt={`${active.sectionTitle} ${active.label}`}
                 loading="eager"
                 decoding="async"
               />
-              <p className={styles.caption}>
-                {active.image.sectionTitle} — {active.image.label}
-              </p>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          portalContainer
+        )}
     </>
   );
 }
-
