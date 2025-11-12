@@ -1,0 +1,20 @@
+---
+import Section from "../components/Section.astro";
+import heroImage from "../assets/images/hero/hero_1.webp";
+import SectionContent from "../components/SectionContent.astro";
+---
+
+<Section id="plats" noPadding>
+  <SectionContent>
+    <img src={heroImage.src} alt="Hero Image" />
+  </SectionContent>
+</Section>
+
+<style>
+  img {
+    height: 150vh;
+    width: 100vw;
+    object-fit: cover;
+    filter: grayscale(100%);
+  }
+</style>
