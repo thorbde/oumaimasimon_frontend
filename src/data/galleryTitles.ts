@@ -9,9 +9,9 @@ const galleryTitleOverrides: Record<string, string> = {
 
 export const gallerySectionOrder = [
   "early",
-  "notpresent",
   "near",
   "couple",
+  "notpresent",
   "morocco",
   "quito",
 ] as const;
