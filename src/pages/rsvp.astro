@@ -428,6 +428,8 @@ import Layout from "../layouts/Layout.astro";
   const initRsvpForm = () => {
     const form = document.querySelector(".rsvpForm");
     if (!(form instanceof HTMLFormElement)) return;
+    if (form.dataset.behaviorInitialized === "true") return;
+    form.dataset.behaviorInitialized = "true";
     const endpoint =
       form.getAttribute("action") || "https://api.oumaimasimon.se/submit";
 
@@ -608,4 +610,6 @@ import Layout from "../layouts/Layout.astro";
   } else {
     initRsvpForm();
   }
+
+  document.addEventListener("astro:page-load", initRsvpForm);
 </script>
