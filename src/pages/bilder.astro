@@ -265,7 +265,10 @@ const apiBase =
   }
 
   .cameraButton {
-    display: inline-flex;
+    /* Hidden by default; only shown on touch devices (mobile/tablet) where
+       `capture="environment"` actually launches the camera. On desktop the
+       button is a no-op so we hide it. */
+    display: none;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
@@ -282,6 +285,11 @@ const apiBase =
     transition:
       background-color 0.2s ease,
       color 0.2s ease;
+  }
+  @media (pointer: coarse) {
+    .cameraButton {
+      display: inline-flex;
+    }
   }
   .cameraButton:hover {
     background: var(--color-primary-500);
