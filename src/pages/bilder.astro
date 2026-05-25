@@ -1,0 +1,964 @@
+---
+import Button from "../components/Button.astro";
+import Layout from "../layouts/Layout.astro";
+
+// The live Worker URL. Override at build time with
+//   PUBLIC_PICS_API_BASE=https://other.example/...
+// when you eventually move to a custom subdomain.
+const apiBase =
+  import.meta.env.PUBLIC_PICS_API_BASE ??
+  "https://wedding-pics.thor-eklund.workers.dev";
+---
+
+<Layout>
+  <section id="bilder" data-api-base={apiBase}>
+    <div class="intro">
+      <h1>Dela bilderna</h1>
+      <p>
+        Ladda upp dina foton och videor från bröllopet så samlar vi alla
+        minnen på ett ställe.
+      </p>
+    </div>
+
+    <!-- Step 1: passphrase -->
+    <form class="authForm" data-auth-form autocomplete="off">
+      <div class="field">
+        <label for="passphrase">Kod från inbjudan</label>
+        <input
+          id="passphrase"
+          name="passphrase"
+          type="text"
+          inputmode="text"
+          autocapitalize="characters"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          placeholder="ABC123"
+        />
+      </div>
+      <Button type="submit" data-auth-submit>Fortsätt</Button>
+      <p class="authError" data-auth-error hidden>
+        Den koden stämmer inte. Försök igen?
+      </p>
+    </form>
+
+    <!-- Step 2: upload -->
+    <div class="uploader" data-uploader hidden>
+      <div class="field nameField">
+        <label for="uploader-name">Ditt namn (valfritt)</label>
+        <input
+          id="uploader-name"
+          type="text"
+          autocomplete="name"
+          maxlength="60"
+          placeholder="Så vi vet vem vi ska tacka"
+        />
+      </div>
+
+      <label class="dropzone" for="file-input">
+        <div class="dropzoneIcon" aria-hidden="true">
+          <svg
+            viewBox="0 0 64 64"
+            width="56"
+            height="56"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="8" y="14" width="48" height="38" rx="6"></rect>
+            <circle cx="32" cy="33" r="9"></circle>
+            <path d="M22 14l4-6h12l4 6"></path>
+          </svg>
+        </div>
+        <div class="dropzoneText">
+          <strong>Tryck för att lägga till bilder &amp; videor</strong>
+          <span>Från kameran eller galleriet</span>
+        </div>
+        <input
+          id="file-input"
+          type="file"
+          accept="image/*,video/*,.heic,.heif"
+          multiple
+          hidden
+        />
+      </label>
+
+      <button class="cameraButton" type="button" data-camera-button>
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+          ></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        Öppna kameran
+      </button>
+      <input
+        id="camera-input"
+        type="file"
+        accept="image/*,video/*"
+        capture="environment"
+        hidden
+      />
+
+      <p class="caps">
+        Upp till 50&nbsp;MB per foto, 500&nbsp;MB per video.
+      </p>
+
+      <ul class="thumbs" data-thumbs aria-live="polite"></ul>
+
+      <div class="actionBar" data-action-bar hidden>
+        <button type="button" class="clearButton" data-clear-button>
+          Rensa
+        </button>
+        <Button type="button" data-upload-button>Ladda upp</Button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  #bilder {
+    padding: 8rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    text-align: center;
+  }
+
+  /* Stronger than .authForm/.uploader display rules so toggling
+     the `hidden` attribute actually hides the section. */
+  #bilder [hidden] {
+    display: none !important;
+  }
+
+  .intro {
+    max-width: 32rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Auth form ── */
+  .authForm {
+    width: min(420px, 100%);
+    display: grid;
+    gap: 1.25rem;
+    padding: 2rem;
+    background: color-mix(in srgb, var(--color-bg) 85%, white 15%);
+    border-radius: 16px;
+    border: 1px solid
+      color-mix(in srgb, var(--color-primary-300) 35%, transparent);
+    box-shadow: 0 2rem 3.5rem rgba(0, 0, 0, 0.08);
+    text-align: left;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid
+      color-mix(in srgb, var(--color-primary-300) 45%, transparent);
+    background-color: color-mix(in srgb, var(--color-bg) 80%, white 20%);
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--color-primary-500) 25%, transparent);
+  }
+
+  #passphrase {
+    text-align: center;
+    font-size: 1.4rem;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+  }
+
+  .authError {
+    margin: 0;
+    color: #b85c5c;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  /* ── Uploader ── */
+  .uploader {
+    width: min(720px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: left;
+  }
+
+  .nameField {
+    max-width: 100%;
+  }
+
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem 1.5rem;
+    background: color-mix(in srgb, var(--color-bg) 85%, white 15%);
+    border: 2px dashed
+      color-mix(in srgb, var(--color-primary-500) 75%, transparent);
+    border-radius: 16px;
+    color: var(--color-primary-500);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      transform 0.05s ease,
+      border-color 0.15s ease;
+  }
+  .dropzone:active {
+    transform: scale(0.995);
+    background: color-mix(in srgb, var(--color-primary-300) 18%, var(--color-bg));
+  }
+  .dropzone.is-drag {
+    background: color-mix(in srgb, var(--color-primary-300) 18%, var(--color-bg));
+    border-color: var(--color-primary-500);
+  }
+  .dropzoneText strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+    color: var(--color-primary-900);
+  }
+  .dropzoneText span {
+    color: color-mix(in srgb, var(--color-primary-900) 70%, transparent);
+    font-size: 0.95rem;
+  }
+
+  .cameraButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    background: transparent;
+    color: var(--color-primary-500);
+    border: 1px solid
+      color-mix(in srgb, var(--color-primary-500) 60%, transparent);
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    align-self: center;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .cameraButton:hover {
+    background: var(--color-primary-500);
+    color: var(--color-bg);
+  }
+
+  .caps {
+    text-align: center;
+    color: color-mix(in srgb, var(--color-primary-900) 65%, transparent);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .thumbs {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .actionBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  .clearButton {
+    background: transparent;
+    color: color-mix(in srgb, var(--color-primary-900) 70%, transparent);
+    border: none;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: color-mix(
+      in srgb,
+      var(--color-primary-900) 30%,
+      transparent
+    );
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+  .clearButton:hover {
+    color: var(--color-primary-900);
+  }
+  .clearButton:disabled {
+    opacity: 0.4;
+    cursor: default;
+    text-decoration: none;
+  }
+
+  @media (min-width: 768px) {
+    #bilder {
+      padding: 10rem 3rem 6rem;
+    }
+  }
+</style>
+
+<!--
+  Thumbnail items are created at runtime via innerHTML, so they don't
+  inherit Astro's per-page scoping attribute. These styles need to stay
+  global so they actually apply.
+-->
+<style is:global>
+  .bilder-thumb {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-primary-300) 22%, var(--color-bg));
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+  .bilder-thumbRemove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition:
+      background 0.15s ease,
+      transform 0.05s ease;
+    z-index: 2;
+  }
+  .bilder-thumbRemove:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+  .bilder-thumbRemove:active {
+    transform: scale(0.92);
+  }
+  .bilder-thumb[data-state="uploading"] .bilder-thumbRemove,
+  .bilder-thumb[data-state="done"] .bilder-thumbRemove {
+    display: none;
+  }
+  .bilder-retryButton {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    color: white;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 0.25rem;
+    transition: background 0.15s ease;
+  }
+  .bilder-retryButton:hover {
+    background: rgba(255, 255, 255, 0.32);
+  }
+  .bilder-retryButton:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .bilder-thumb img,
+  .bilder-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .bilder-thumbPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-primary-500);
+    word-break: break-word;
+  }
+  .bilder-thumbOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(59, 64, 54, 0.6);
+    color: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .bilder-thumb[data-state="done"] .bilder-thumbOverlay {
+    background: color-mix(in srgb, var(--color-primary-500) 92%, black);
+    animation: bilderFadeOut 0.5s 1.6s forwards;
+  }
+  .bilder-thumb[data-state="error"] .bilder-thumbOverlay {
+    background: rgba(184, 92, 92, 0.92);
+  }
+  @keyframes bilderFadeOut {
+    to {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  .bilder-progressRing {
+    width: 38px;
+    height: 38px;
+    transform: rotate(-90deg);
+  }
+  .bilder-progressRing circle {
+    fill: none;
+    stroke-width: 3;
+  }
+  .bilder-progressRing .bg {
+    stroke: rgba(255, 255, 255, 0.25);
+  }
+  .bilder-progressRing .fg {
+    stroke: currentColor;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.18s ease;
+  }
+  .bilder-checkMark {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+</style>
+
+<script>
+  type Thumb = HTMLLIElement;
+
+  const STORAGE_KEY_TOKEN = "oumaimasimon:pics-token";
+  const STORAGE_KEY_NAME = "oumaimasimon:pics-name";
+
+  const init = () => {
+    const root = document.getElementById("bilder");
+    if (!(root instanceof HTMLElement)) return;
+    if (root.dataset.behaviorInit === "true") return;
+    root.dataset.behaviorInit = "true";
+
+    const apiBase = root.dataset.apiBase ?? "";
+    const authForm = root.querySelector<HTMLFormElement>("[data-auth-form]");
+    const authError = root.querySelector<HTMLElement>("[data-auth-error]");
+    const authSubmit = root.querySelector<HTMLButtonElement>("[data-auth-submit]");
+    const passphraseInput = root.querySelector<HTMLInputElement>("#passphrase");
+    const uploader = root.querySelector<HTMLElement>("[data-uploader]");
+    const nameInput = root.querySelector<HTMLInputElement>("#uploader-name");
+    const dropzone = root.querySelector<HTMLLabelElement>(".dropzone");
+    const fileInput = root.querySelector<HTMLInputElement>("#file-input");
+    const cameraButton = root.querySelector<HTMLButtonElement>("[data-camera-button]");
+    const cameraInput = root.querySelector<HTMLInputElement>("#camera-input");
+    const thumbs = root.querySelector<HTMLUListElement>("[data-thumbs]");
+    const actionBar = root.querySelector<HTMLElement>("[data-action-bar]");
+    const uploadButton = root.querySelector<HTMLButtonElement>("[data-upload-button]");
+    const clearButton = root.querySelector<HTMLButtonElement>("[data-clear-button]");
+
+    if (
+      !authForm || !authError || !authSubmit || !passphraseInput ||
+      !uploader || !nameInput || !dropzone || !fileInput ||
+      !cameraButton || !cameraInput || !thumbs ||
+      !actionBar || !uploadButton || !clearButton
+    ) {
+      console.error("bilder: missing required elements");
+      return;
+    }
+
+    let uploadChain: Promise<void> = Promise.resolve();
+    const MAX_IMAGE = 50 * 1024 * 1024;
+    const MAX_VIDEO = 500 * 1024 * 1024;
+
+    // Files staged for upload but not yet sent. Keyed by their thumb LI so
+    // we can remove a single file when the user X's it.
+    const fileMap = new WeakMap<HTMLLIElement, File>();
+
+    const showUploader = () => {
+      authForm.hidden = true;
+      uploader.hidden = false;
+      const saved = localStorage.getItem(STORAGE_KEY_NAME);
+      if (saved) nameInput.value = saved;
+      nameInput.addEventListener("change", () => {
+        localStorage.setItem(STORAGE_KEY_NAME, nameInput.value.trim());
+      });
+    };
+
+    const showAuth = (message?: string) => {
+      uploader.hidden = true;
+      authForm.hidden = false;
+      if (message) {
+        authError.textContent = message;
+        authError.hidden = false;
+      }
+      setTimeout(() => passphraseInput.focus(), 50);
+    };
+
+    const getStoredToken = (): string | null => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_TOKEN);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as { token: string; expiresAt: number };
+        if (!parsed?.token || typeof parsed.expiresAt !== "number") return null;
+        if (Date.now() >= parsed.expiresAt - 60_000) return null;
+        return parsed.token;
+      } catch {
+        return null;
+      }
+    };
+
+    const saveToken = (token: string, expiresAt: number) => {
+      localStorage.setItem(STORAGE_KEY_TOKEN, JSON.stringify({ token, expiresAt }));
+    };
+
+    const clearToken = () => {
+      localStorage.removeItem(STORAGE_KEY_TOKEN);
+    };
+
+    const submitAuth = async (passphrase: string) => {
+      authError.hidden = true;
+      authSubmit.disabled = true;
+      const originalText = authSubmit.textContent;
+      authSubmit.textContent = "Kontrollerar…";
+      try {
+        const res = await fetch(`${apiBase}/auth`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passphrase }),
+        });
+        const body = (await res.json().catch(() => null)) as {
+          ok?: boolean;
+          token?: string;
+          expiresAt?: number;
+        } | null;
+
+        if (res.ok && body?.ok && body.token && body.expiresAt) {
+          saveToken(body.token, body.expiresAt);
+          showUploader();
+        } else {
+          authError.textContent = "Den koden stämmer inte. Försök igen?";
+          authError.hidden = false;
+          passphraseInput.select();
+        }
+      } catch (err) {
+        console.error(err);
+        authError.textContent =
+          "Kunde inte nå servern. Är du uppkopplad?";
+        authError.hidden = false;
+      } finally {
+        authSubmit.disabled = false;
+        if (originalText) authSubmit.textContent = originalText;
+      }
+    };
+
+    authForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const value = passphraseInput.value.trim();
+      if (!value) return;
+      submitAuth(value);
+    });
+
+    // Files
+    fileInput.addEventListener("change", () => {
+      handleFiles(fileInput.files);
+      fileInput.value = "";
+    });
+    cameraButton.addEventListener("click", () => cameraInput.click());
+    cameraInput.addEventListener("change", () => {
+      handleFiles(cameraInput.files);
+      cameraInput.value = "";
+    });
+
+    ["dragenter", "dragover"].forEach((ev) =>
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        dropzone.classList.add("is-drag");
+      }),
+    );
+    ["dragleave", "drop"].forEach((ev) =>
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("is-drag");
+      }),
+    );
+    dropzone.addEventListener("drop", (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (dt?.files?.length) handleFiles(dt.files);
+    });
+
+    function handleFiles(list: FileList | null) {
+      if (!list) return;
+      for (const file of Array.from(list)) addToStage(file);
+      refreshActionBar();
+    }
+
+    function addToStage(file: File) {
+      // Pre-flight cap check before staging — no point staging a too-big file.
+      const capError = clientSideCheck(file);
+      const thumb = makeThumb(file);
+      if (capError) {
+        setError(thumb, capError);
+      } else {
+        fileMap.set(thumb, file);
+      }
+    }
+
+    function makeThumb(file: File): Thumb {
+      const li = document.createElement("li");
+      li.className = "bilder-thumb";
+      li.dataset.state = "staged";
+
+      const isImage = file.type.startsWith("image/");
+      const isVideo = file.type.startsWith("video/");
+      const isHeic =
+        /heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name);
+
+      if (isImage && !isHeic) {
+        const img = document.createElement("img");
+        img.alt = "";
+        img.src = URL.createObjectURL(file);
+        img.onload = () => URL.revokeObjectURL(img.src);
+        li.appendChild(img);
+      } else if (isVideo) {
+        const video = document.createElement("video");
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "metadata";
+        video.src = URL.createObjectURL(file);
+        li.appendChild(video);
+      } else {
+        const ph = document.createElement("div");
+        ph.className = "bilder-thumbPlaceholder";
+        ph.textContent = file.name;
+        li.appendChild(ph);
+      }
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "bilder-thumbRemove";
+      removeBtn.setAttribute("aria-label", "Ta bort");
+      removeBtn.textContent = "×";
+      removeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const state = li.dataset.state;
+        // Dismissable from "staged" (never tried) or "error" (gave up).
+        if (state !== "staged" && state !== "error") return;
+        fileMap.delete(li);
+        li.remove();
+        refreshActionBar();
+      });
+      li.appendChild(removeBtn);
+
+      thumbs!.prepend(li);
+      return li;
+    }
+
+    function refreshActionBar() {
+      const stagedThumbs = thumbs!.querySelectorAll<HTMLLIElement>(
+        ".bilder-thumb[data-state=\"staged\"]",
+      );
+      const count = stagedThumbs.length;
+      if (count === 0) {
+        actionBar!.hidden = true;
+        return;
+      }
+      actionBar!.hidden = false;
+      uploadButton!.textContent =
+        count === 1 ? "Ladda upp 1 fil" : `Ladda upp ${count} filer`;
+      uploadButton!.disabled = false;
+      clearButton!.disabled = false;
+    }
+
+    uploadButton.addEventListener("click", () => {
+      const staged = Array.from(
+        thumbs!.querySelectorAll<HTMLLIElement>(
+          ".bilder-thumb[data-state=\"staged\"]",
+        ),
+      );
+      if (staged.length === 0) return;
+      uploadButton.disabled = true;
+      clearButton.disabled = true;
+      for (const thumb of staged) startUpload(thumb);
+      refreshActionBar();
+    });
+
+    clearButton.addEventListener("click", () => {
+      const staged = thumbs!.querySelectorAll<HTMLLIElement>(
+        ".bilder-thumb[data-state=\"staged\"]",
+      );
+      for (const t of staged) {
+        fileMap.delete(t);
+        t.remove();
+      }
+      refreshActionBar();
+    });
+
+    function startUpload(thumb: HTMLLIElement) {
+      const file = fileMap.get(thumb);
+      if (!file) return;
+      // Note: keep the file in fileMap so retries after an error can find it.
+      // setDone() clears it once we no longer need the bytes in memory.
+      thumb.dataset.state = "uploading";
+
+      // Make sure the overlay shows the progress ring (covers both the
+      // first-attempt path and any retry after error).
+      const overlay = ensureOverlay(thumb);
+      overlay.innerHTML = ringSvg(0);
+
+      uploadChain = uploadChain
+        .then(() => uploadOne(file, thumb))
+        .catch(() => {})
+        .finally(() => refreshActionBar());
+    }
+
+    function ringSvg(percent: number): string {
+      const r = 16;
+      const c = 2 * Math.PI * r;
+      const off = c * (1 - percent / 100);
+      return `
+        <svg class="bilder-progressRing" viewBox="0 0 40 40" width="38" height="38">
+          <circle class="bg" cx="20" cy="20" r="${r}" />
+          <circle class="fg" cx="20" cy="20" r="${r}" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" />
+        </svg>
+        <span>${Math.round(percent)}%</span>
+      `;
+    }
+
+    function ensureOverlay(thumb: Thumb): HTMLElement {
+      let overlay = thumb.querySelector<HTMLElement>(".bilder-thumbOverlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.className = "bilder-thumbOverlay";
+        thumb.appendChild(overlay);
+      }
+      return overlay;
+    }
+    function setProgress(thumb: Thumb, percent: number) {
+      ensureOverlay(thumb).innerHTML = ringSvg(percent);
+    }
+    function setDone(thumb: Thumb) {
+      thumb.dataset.state = "done";
+      // Done — free the File reference so the blob can be GC'd.
+      fileMap.delete(thumb);
+      ensureOverlay(thumb).innerHTML = `<span class="bilder-checkMark">✓</span><span>Uppladdat</span>`;
+    }
+    function setError(thumb: Thumb, msg: string, retry?: () => void) {
+      thumb.dataset.state = "error";
+      const overlay = ensureOverlay(thumb);
+      overlay.replaceChildren();
+
+      const icon = document.createElement("span");
+      icon.className = "bilder-checkMark";
+      icon.textContent = "!";
+      overlay.appendChild(icon);
+
+      const msgEl = document.createElement("span");
+      msgEl.textContent = msg;
+      overlay.appendChild(msgEl);
+
+      if (retry) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "bilder-retryButton";
+        btn.textContent = "Försök igen";
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          btn.disabled = true;
+          retry();
+        });
+        overlay.appendChild(btn);
+      }
+    }
+
+    function clientSideCheck(file: File): string | null {
+      const isImage =
+        file.type.startsWith("image/") || /\.(heic|heif)$/i.test(file.name);
+      const isVideo = file.type.startsWith("video/");
+      if (!isImage && !isVideo) return "Filtypen stöds inte";
+      const cap = isImage ? MAX_IMAGE : MAX_VIDEO;
+      if (file.size > cap) {
+        return `För stor (max ${Math.round(cap / (1024 * 1024))} MB)`;
+      }
+      return null;
+    }
+
+    async function uploadOne(file: File, thumb: Thumb): Promise<void> {
+      // Retry handler shared across all retryable error sites below.
+      // Re-queues the same thumb at the end of the upload chain.
+      const retry = () => startUpload(thumb);
+
+      const capError = clientSideCheck(file);
+      if (capError) { setError(thumb, capError); return; } // fatal — file is the wrong size/type
+
+      const token = getStoredToken();
+      if (!token) {
+        setError(thumb, "Sessionen gick ut"); // fatal until re-auth
+        clearToken();
+        showAuth("Sessionen gick ut, ange koden igen.");
+        return;
+      }
+
+      // 1) Ask the Worker to mint a resumable upload session URL.
+      let uploadUrl: string;
+      try {
+        const initRes = await fetch(`${apiBase}/upload-init`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            mime: file.type || guessMime(file.name),
+            size: file.size,
+            name: nameInput.value.trim() || undefined,
+          }),
+        });
+        const initBody = (await initRes.json().catch(() => null)) as
+          | { ok?: boolean; uploadUrl?: string; error?: string; capLabel?: string }
+          | null;
+
+        if (initRes.status === 401) {
+          clearToken();
+          setError(thumb, "Sessionen gick ut"); // fatal — needs re-auth
+          showAuth("Sessionen gick ut, ange koden igen.");
+          return;
+        }
+        if (initRes.status === 413) {
+          setError(thumb, `För stor (max ${initBody?.capLabel || ""})`); // fatal — file is too big
+          return;
+        }
+        if (initRes.status === 415) {
+          setError(thumb, "Filtypen stöds inte"); // fatal — file type wrong
+          return;
+        }
+        if (!initRes.ok || !initBody?.ok || !initBody.uploadUrl) {
+          setError(thumb, "Kunde inte starta uppladdning", retry);
+          return;
+        }
+        uploadUrl = initBody.uploadUrl;
+      } catch (err) {
+        console.error(err);
+        setError(thumb, "Nätverksfel", retry);
+        return;
+      }
+
+      // 2) PUT the file bytes directly to Google.
+      await new Promise<void>((resolve) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", uploadUrl, true);
+        xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) setProgress(thumb, (e.loaded / e.total) * 100);
+        };
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            setDone(thumb);
+          } else {
+            setError(thumb, "Uppladdning misslyckades", retry);
+          }
+          resolve();
+        };
+        xhr.onerror = () => { setError(thumb, "Nätverksfel", retry); resolve(); };
+        xhr.ontimeout = () => { setError(thumb, "Tidsgräns nåddes", retry); resolve(); };
+        xhr.send(file);
+      });
+    }
+
+    function escapeHtml(s: string): string {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      }[c]!));
+    }
+
+    function guessMime(name: string): string {
+      const ext = name.split(".").pop()?.toLowerCase();
+      switch (ext) {
+        case "heic": return "image/heic";
+        case "heif": return "image/heif";
+        case "jpg":
+        case "jpeg": return "image/jpeg";
+        case "png": return "image/png";
+        case "gif": return "image/gif";
+        case "mp4": return "video/mp4";
+        case "mov": return "video/quicktime";
+        default: return "application/octet-stream";
+      }
+    }
+
+    // ── Boot ──
+    const stored = getStoredToken();
+    if (stored) {
+      showUploader();
+    } else {
+      // QR codes: /bilder?c=ABC123 auto-submits the passphrase.
+      const params = new URLSearchParams(window.location.search);
+      const presetCode = params.get("c");
+      if (presetCode) {
+        passphraseInput.value = presetCode;
+        submitAuth(presetCode);
+      } else {
+        setTimeout(() => passphraseInput.focus(), 50);
+      }
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+  document.addEventListener("astro:page-load", init);
+</script>
