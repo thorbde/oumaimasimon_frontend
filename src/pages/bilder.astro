@@ -85,7 +85,7 @@ const apiBase =
         />
       </label>
 
-      <button class="cameraButton" type="button" data-camera-button>
+      <label class="cameraButton" for="camera-input">
         <svg
           viewBox="0 0 24 24"
           width="20"
@@ -102,12 +102,12 @@ const apiBase =
           ></path>
           <circle cx="12" cy="13" r="4"></circle>
         </svg>
-        Öppna kameran
-      </button>
+        Ta ett foto
+      </label>
       <input
         id="camera-input"
         type="file"
-        accept="image/*,video/*"
+        accept="image/*"
         capture="environment"
         hidden
       />
@@ -507,7 +507,6 @@ const apiBase =
     const nameInput = root.querySelector<HTMLInputElement>("#uploader-name");
     const dropzone = root.querySelector<HTMLLabelElement>(".dropzone");
     const fileInput = root.querySelector<HTMLInputElement>("#file-input");
-    const cameraButton = root.querySelector<HTMLButtonElement>("[data-camera-button]");
     const cameraInput = root.querySelector<HTMLInputElement>("#camera-input");
     const thumbs = root.querySelector<HTMLUListElement>("[data-thumbs]");
     const actionBar = root.querySelector<HTMLElement>("[data-action-bar]");
@@ -517,7 +516,7 @@ const apiBase =
     if (
       !authForm || !authError || !authSubmit || !passphraseInput ||
       !uploader || !nameInput || !dropzone || !fileInput ||
-      !cameraButton || !cameraInput || !thumbs ||
+      !cameraInput || !thumbs ||
       !actionBar || !uploadButton || !clearButton
     ) {
       console.error("bilder: missing required elements");
@@ -621,7 +620,6 @@ const apiBase =
       handleFiles(fileInput.files);
       fileInput.value = "";
     });
-    cameraButton.addEventListener("click", () => cameraInput.click());
     cameraInput.addEventListener("change", () => {
       handleFiles(cameraInput.files);
       cameraInput.value = "";
